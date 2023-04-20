@@ -6,9 +6,9 @@ import {
   deleteSong,
 } from "../controllers/songController.js";
 
-const router = express.Router();
+const songRouter = express.Router();
 
-router.route("/").get(getSongs).post(createSong);
-router.route("/:id").put(updateSong).delete(deleteSong);
+songRouter.route("/").get(getSongs).post(createSong);
+songRouter.route("/:id").put(updateSong).delete(deleteSong);
 
-export default router;
+export default songRouter;
