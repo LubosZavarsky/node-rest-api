@@ -1,5 +1,6 @@
 import asyncHandler from "express-async-handler";
 import Song from "../models/songModel.js";
+import User from "../models/userModel.js";
 
 // @desc    Get songs
 // @route   GET /api/songs
@@ -21,6 +22,7 @@ export const createSong = asyncHandler(async (req, res) => {
   const song = await Song.create({
     name: req.body.name,
     author: req.body.author,
+    user: req.user.id,
   });
 
   res.status(200).json(song);
@@ -35,6 +37,20 @@ export const updateSong = asyncHandler(async (req, res) => {
   if (!song) {
     res.status(400);
     throw new Error("Song not found");
+  }
+
+  const user = await User.findById(req.user.id);
+
+  // Check for user
+  if (!user) {
+    res.status(401);
+    throw new Error("User not found");
+  }
+
+  // Logged in user must match song owner
+  if (song.user.toString() !== user.id) {
+    res.status(401);
+    throw new Error("User not authorized");
   }
 
   const updatedSong = await Song.findByIdAndUpdate(req.params.id, req.body, {
@@ -52,6 +68,20 @@ export const deleteSong = asyncHandler(async (req, res) => {
   if (!song) {
     res.status(400);
     throw new Error("Song not found");
+  }
+
+  const user = await User.findById(req.user.id);
+
+  // Check for user
+  if (!user) {
+    res.status(401);
+    throw new Error("User not found");
+  }
+
+  // Logged in user must match song owner
+  if (song.user.toString() !== user.id) {
+    res.status(401);
+    throw new Error("User not authorized");
   }
 
   await song.deleteOne();

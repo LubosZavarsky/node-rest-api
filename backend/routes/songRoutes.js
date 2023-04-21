@@ -1,4 +1,5 @@
 import express from "express";
+import protect from "../middleware/authMiddelware.js";
 import {
   getSongs,
   createSong,
@@ -8,7 +9,7 @@ import {
 
 const songRouter = express.Router();
 
-songRouter.route("/").get(getSongs).post(createSong);
-songRouter.route("/:id").put(updateSong).delete(deleteSong);
+songRouter.route("/").get(getSongs).post(protect, createSong);
+songRouter.route("/:id").put(protect, updateSong).delete(protect, deleteSong);
 
 export default songRouter;

@@ -9,6 +9,8 @@ import User from "../models/userModel.js";
 export const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
 
+  console.log(name, email, password);
+
   if (!name || !email || !password) {
     res.status(400);
     throw new Error("Please fill in all fields");
@@ -38,6 +40,7 @@ export const registerUser = asyncHandler(async (req, res) => {
       _id: user.id,
       name: user.name,
       email: user.email,
+      token: generateToken(user._id),
     });
   } else {
     res.status(400);
@@ -49,12 +52,40 @@ export const registerUser = asyncHandler(async (req, res) => {
 // @route   POST /api/users/login
 // @access  Public
 export const loginUser = asyncHandler(async (req, res) => {
-  res.json({ message: "Login user" });
+  const { email, password } = req.body;
+
+  // Check for user email
+  const user = await User.findOne({ email });
+
+  if (user && (await bcryptjs.compare(password, user.password))) {
+    res.json({
+      _id: user.id,
+      name: user.name,
+      email: user.email,
+      token: generateToken(user._id),
+    });
+  } else {
+    res.status(400);
+    throw new Error("Invalid credentials");
+  }
 });
 
 // @desc    Get user data
 // @route   GET /api/users/me
-// @access  Public
+// @access  Private
 export const getUser = asyncHandler(async (req, res) => {
-  res.json({ message: "Get user data" });
+  const { _id, name, email } = await User.findById(req.user.id);
+
+  res.status(200).json({
+    id: _id,
+    name: name,
+    email: email,
+  });
 });
+
+// Generate JWT
+const generateToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: "30d",
+  });
+};
