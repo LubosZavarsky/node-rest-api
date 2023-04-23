@@ -39,16 +39,14 @@ export const updateSong = asyncHandler(async (req, res) => {
     throw new Error("Song not found");
   }
 
-  const user = await User.findById(req.user.id);
-
   // Check for user
-  if (!user) {
+  if (!req.user) {
     res.status(401);
     throw new Error("User not found");
   }
 
   // Logged in user must match song owner
-  if (song.user.toString() !== user.id) {
+  if (song.user.toString() !== req.user.id) {
     res.status(401);
     throw new Error("User not authorized");
   }
@@ -70,16 +68,14 @@ export const deleteSong = asyncHandler(async (req, res) => {
     throw new Error("Song not found");
   }
 
-  const user = await User.findById(req.user.id);
-
   // Check for user
-  if (!user) {
+  if (!req.user) {
     res.status(401);
     throw new Error("User not found");
   }
 
   // Logged in user must match song owner
-  if (song.user.toString() !== user.id) {
+  if (song.user.toString() !== req.user.id) {
     res.status(401);
     throw new Error("User not authorized");
   }

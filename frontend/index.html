@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css"
+    />
+    <link rel="stylesheet" href="./assets/style.css" />
+    <script defer src="./assets/script.js"></script>
+    <script
+      defer
+      src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.12.0/cdn.js"
+    ></script>
+  </head>
+  <body>
+    <div x-data="getSongs" class="container">
+      <h1>Alpine FE test</h1>
+      <button @click="fetchSong">Fetch songs</button>
+
+      <template x-if="isLoading">
+        <p aria-busy="true">Loading…</p>
+      </template>
+
+      <template x-if="songs !== null ">
+        <div class="card-grid">
+          <template x-for="song in songs" :key="song._id">
+            <div class="user-card">
+              <h3 x-text="song.name"></h3>
+              <p x-text="song.author"></p>
+            </div>
+          </template>
+        </div>
+      </template>
+
+      <button @click="trySong">Post test</button>
+    </div>
+    <script>
+      function getSongs() {
+        return {
+          isLoading: false,
+          songs: null,
+          fetchSong() {
+            this.isLoading = true;
+            fetch(`http://localhost:8000/api/songs/`) // !! only in dev env, change to /api/songs in prod !!, move to script.js?
+              .then((res) => res.json())
+              .then((data) => {
+                this.isLoading = false;
+                this.songs = data;
+                console.log(this.songs);
+              });
+          },
+          trySong() {
+            this.isLoading = true;
+            fetch(`http://localhost:8000/api/songs/`, { method: "POST" })
+              .then((res) => res.json())
+              .then((data) => {
+                this.isLoading = false;
+                console.log(data);
+              });
+          },
+        };
+      }
+    </script>
+  </body>
+</html>
