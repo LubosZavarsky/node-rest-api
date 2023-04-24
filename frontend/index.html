@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" x-data="controlData">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -16,7 +16,57 @@
       src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.12.0/cdn.js"
     ></script>
   </head>
-  <body>
+  <body class="container">
+    <p x-text="currentTab"></p>
+    <div x-show="!currentUser">
+      <!-- LOGIN FORM -->
+      <div x-show="currentTab === 'login'">
+        <h2>Login</h2>
+        <form @submit.prevent="login">
+          <input type="email" placeholder="Email" x-model="email" required />
+          <input
+            type="password"
+            placeholder="Password"
+            x-model="password"
+            required
+          />
+          <button type="submit">Login</button>
+        </form>
+        <a href="#" @click.prevent="currentTab = 'register'"
+          >Create an account</a
+        >
+      </div>
+      <!-- REGISTER FORM -->
+      <div x-show="currentTab === 'register'">
+        <h2>Register</h2>
+        <form @submit.prevent="register">
+          <input
+            type="text"
+            placeholder="Username"
+            x-model="username"
+            required
+          />
+          <input type="email" placeholder="Email" x-model="email" required />
+          <input
+            type="password"
+            placeholder="Password"
+            x-model="password"
+            required
+          />
+          <button type="submit">Register</button>
+        </form>
+        <a href="#" @click.prevent="currentTab = 'login'"
+          >Already have an account</a
+        >
+      </div>
+    </div>
+    <!-- DASHBOARD -->
+    <div x-show="currentUser">
+      <h2>Welcome to Dashboard</h2>
+      <p x-text="'Hello, ' + currentUser"></p>
+      <button @click="logout">Logout</button>
+    </div>
+    <!-- --------PLAYGROUND-------- -->
     <div x-data="getSongs" class="container">
       <h1>Alpine FE test</h1>
       <button @click="fetchSong">Fetch songs</button>
@@ -25,45 +75,28 @@
         <p aria-busy="true">Loading…</p>
       </template>
 
-      <template x-if="songs !== null ">
-        <div class="card-grid">
-          <template x-for="song in songs" :key="song._id">
-            <div class="user-card">
-              <h3 x-text="song.name"></h3>
-              <p x-text="song.author"></p>
-            </div>
-          </template>
-        </div>
+      <template x-if="songs !== null">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Song IDX</th>
+              <th scope="col">Song name</th>
+              <th scope="col">Song author</th>
+            </tr>
+          </thead>
+          <tbody>
+            <template x-for="(song, index) in songs" :key="song._id">
+              <tr>
+                <td x-text="index+1"></td>
+                <td x-text="song.name.toLowerCase()"></td>
+                <td x-text="song.author.toLowerCase()"></td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
       </template>
 
       <button @click="trySong">Post test</button>
     </div>
-    <script>
-      function getSongs() {
-        return {
-          isLoading: false,
-          songs: null,
-          fetchSong() {
-            this.isLoading = true;
-            fetch(`http://localhost:8000/api/songs/`) // !! only in dev env, change to /api/songs in prod !!, move to script.js?
-              .then((res) => res.json())
-              .then((data) => {
-                this.isLoading = false;
-                this.songs = data;
-                console.log(this.songs);
-              });
-          },
-          trySong() {
-            this.isLoading = true;
-            fetch(`http://localhost:8000/api/songs/`, { method: "POST" })
-              .then((res) => res.json())
-              .then((data) => {
-                this.isLoading = false;
-                console.log(data);
-              });
-          },
-        };
-      }
-    </script>
   </body>
 </html>
