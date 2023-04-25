@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" x-data="controlData">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -10,6 +10,7 @@
       href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css"
     />
     <link rel="stylesheet" href="./assets/style.css" />
+    <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script defer src="./assets/script.js"></script>
     <script
       defer
@@ -17,54 +18,58 @@
     ></script>
   </head>
   <body class="container">
-    <p x-text="currentTab"></p>
-    <div x-show="!currentUser">
-      <!-- LOGIN FORM -->
-      <div x-show="currentTab === 'login'">
-        <h2>Login</h2>
-        <form @submit.prevent="login">
-          <input type="email" placeholder="Email" x-model="email" required />
-          <input
-            type="password"
-            placeholder="Password"
-            x-model="password"
-            required
-          />
-          <button type="submit">Login</button>
-        </form>
-        <a href="#" @click.prevent="currentTab = 'register'"
-          >Create an account</a
-        >
-      </div>
-      <!-- REGISTER FORM -->
-      <div x-show="currentTab === 'register'">
-        <h2>Register</h2>
-        <form @submit.prevent="register">
-          <input
-            type="text"
-            placeholder="Username"
-            x-model="username"
-            required
-          />
-          <input type="email" placeholder="Email" x-model="email" required />
-          <input
-            type="password"
-            placeholder="Password"
-            x-model="password"
-            required
-          />
-          <button type="submit">Register</button>
-        </form>
-        <a href="#" @click.prevent="currentTab = 'login'"
-          >Already have an account</a
-        >
+    <p x-text="$store.storeData.currentTab"></p>
+
+    <!-- FORMS -->
+    <div x-data x-show="!$store.storeData.user">
+      <div x-data="formData">
+        <!-- LOGIN FORM -->
+        <div x-show="$store.storeData.currentTab === 'login'">
+          <h2>Login</h2>
+          <form @submit.prevent="login">
+            <input type="email" placeholder="Email" x-model="email" required />
+            <input
+              type="password"
+              placeholder="Password"
+              x-model="password"
+              required
+            />
+            <button type="submit">Login</button>
+          </form>
+          <a href="#" @click.prevent="$store.storeData.currentTab = 'register'"
+            >Create an account</a
+          >
+        </div>
+        <!-- REGISTER FORM -->
+        <div x-show="$store.storeData.currentTab === 'register'">
+          <h2>Register</h2>
+          <form @submit.prevent="register">
+            <input
+              type="text"
+              placeholder="Username"
+              x-model="username"
+              required
+            />
+            <input type="email" placeholder="Email" x-model="email" required />
+            <input
+              type="password"
+              placeholder="Password"
+              x-model="password"
+              required
+            />
+            <button type="submit">Register</button>
+          </form>
+          <a href="#" @click.prevent="$store.storeData.currentTab = 'login'"
+            >Already have an account</a
+          >
+        </div>
       </div>
     </div>
     <!-- DASHBOARD -->
-    <div x-show="currentUser">
+    <div x-data x-show="$store.storeData.user">
       <h2>Welcome to Dashboard</h2>
-      <p x-text="'Hello, ' + currentUser"></p>
-      <button @click="logout">Logout</button>
+      <p x-text="'Hello, ' + $store.storeData.user?.name"></p>
+      <button @click="$store.storeData.logout()">Logout</button>
     </div>
     <!-- --------PLAYGROUND-------- -->
     <div x-data="getSongs" class="container">
@@ -95,8 +100,6 @@
           </tbody>
         </table>
       </template>
-
-      <button @click="trySong">Post test</button>
     </div>
   </body>
 </html>

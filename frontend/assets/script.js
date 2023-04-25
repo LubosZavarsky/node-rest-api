@@ -1,23 +1,46 @@
 document.addEventListener("alpine:init", () => {
-  //Alpine.store("storeData", {}); move controlData to store ?!
-  Alpine.data("controlData", () => ({
+  Alpine.store("storeData", {
+    init() {
+      this.user = JSON.parse(localStorage.getItem("user"));
+    },
+    user: null,
     currentTab: "login",
-    currentUser: null,
+    logout() {
+      localStorage.removeItem("user");
+      this.user = null;
+    },
+  });
+  Alpine.data("formData", () => ({
     username: "",
     email: "",
     password: "",
     login() {
-      // WORKING! add try/catch, validation, save token in localStorage, normalize state (currentUser as obj?, form field as obj?)
-      console.log(this.email, this.password);
-      fetch(`http://localhost:8000/api/users/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: this.email, password: this.password }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log(data), (this.currentUser = data.name);
-        });
+      try {
+        fetch(`http://localhost:8000/api/users/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: this.email, password: this.password }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.message) {
+              Swal.fire(data.message);
+            } else {
+              localStorage.setItem("user", JSON.stringify(data));
+              Alpine.store("storeData").user = JSON.parse(
+                localStorage.getItem("user")
+              );
+              Swal.fire({
+                text: "User logged in: " + Alpine.store("storeData").user.name,
+                position: "top-end",
+                timer: 1500,
+                showConfirmButton: false,
+              });
+            }
+          });
+      } catch (error) {
+        console.log(error);
+      }
     },
   })),
     Alpine.data("getSongs", () => ({
@@ -31,17 +54,6 @@ document.addEventListener("alpine:init", () => {
             this.isLoading = false;
             this.songs = data;
             console.log(this.songs);
-          });
-      },
-      trySong() {
-        this.isLoading = true;
-        fetch(`http://localhost:8000/api/songs/`, {
-          method: "POST",
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            this.isLoading = false;
-            console.log(data);
           });
       },
     }));
