@@ -1,0 +1,34 @@
+.container {
+  display: grid;
+  place-content: center;
+}
+body > header {
+  display: flex;
+  justify-items: center;
+  align-items: center;
+  padding: 1rem 1rem;
+  background-color: #ffe4c4;
+}
+
+.user-info {
+  display: flex;
+  justify-items: center;
+  align-items: center;
+  gap: 1rem;
+  margin-left: auto;
+}
+
+.user-info > p {
+  margin-bottom: 0;
+}
+
+.user-info > button {
+  padding: 0.25rem 0.5rem;
+  margin-bottom: 0;
+  width: auto;
+  font-size: 0.75rem;
+}
+
+form {
+  max-width: 600px;
+}

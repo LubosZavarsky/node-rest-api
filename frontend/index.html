@@ -17,89 +17,118 @@
       src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.12.0/cdn.js"
     ></script>
   </head>
-  <body class="container">
-    <p x-text="$store.storeData.currentTab"></p>
+  <body>
+    <header>
+      <div>💩 <strong>cms</strong></div>
+      <div class="user-info" x-data x-show="$store.storeData.user">
+        <p x-text="'Hello, ' + $store.storeData.user?.name"></p>
+        <button @click="$store.storeData.logout()">Logout</button>
+      </div>
+    </header>
+    <main class="container">
+      <p x-text="$store.storeData.currentTab"></p>
 
-    <!-- FORMS -->
-    <div x-data x-show="!$store.storeData.user">
-      <div x-data="formData">
-        <!-- LOGIN FORM -->
-        <div x-show="$store.storeData.currentTab === 'login'">
-          <h2>Login</h2>
-          <form @submit.prevent="login">
-            <input type="email" placeholder="Email" x-model="email" required />
-            <input
-              type="password"
-              placeholder="Password"
-              x-model="password"
-              required
-            />
-            <button type="submit">Login</button>
-          </form>
-          <a href="#" @click.prevent="$store.storeData.currentTab = 'register'"
-            >Create an account</a
-          >
-        </div>
-        <!-- REGISTER FORM -->
-        <div x-show="$store.storeData.currentTab === 'register'">
-          <h2>Register</h2>
-          <form @submit.prevent="register">
-            <input
-              type="text"
-              placeholder="Username"
-              x-model="username"
-              required
-            />
-            <input type="email" placeholder="Email" x-model="email" required />
-            <input
-              type="password"
-              placeholder="Password"
-              x-model="password"
-              required
-            />
-            <button type="submit">Register</button>
-          </form>
-          <a href="#" @click.prevent="$store.storeData.currentTab = 'login'"
-            >Already have an account</a
-          >
+      <!-- FORMS -->
+      <div x-data x-show="!$store.storeData.user">
+        <div x-data="formData">
+          <!-- LOGIN FORM -->
+          <div x-show="$store.storeData.currentTab === 'login'">
+            <h2>Login</h2>
+            <form @submit.prevent="login">
+              <input
+                type="email"
+                placeholder="Email"
+                x-model="email"
+                required
+              />
+              <input
+                type="password"
+                placeholder="Password"
+                x-model="password"
+                required
+              />
+              <button type="submit">Login</button>
+            </form>
+            <a
+              href="#"
+              @click.prevent="$store.storeData.currentTab = 'register'"
+              >Create an account</a
+            >
+          </div>
+          <!-- REGISTER FORM -->
+          <div x-show="$store.storeData.currentTab === 'register'">
+            <h2>Register</h2>
+            <form @submit.prevent="register">
+              <input
+                type="text"
+                placeholder="Username"
+                x-model="username"
+                required
+              />
+              <input
+                type="email"
+                placeholder="Email"
+                x-model="email"
+                required
+              />
+              <input
+                type="password"
+                placeholder="Password"
+                x-model="password"
+                required
+              />
+              <button type="submit">Register</button>
+            </form>
+            <a href="#" @click.prevent="$store.storeData.currentTab = 'login'"
+              >Already have an account</a
+            >
+          </div>
         </div>
       </div>
-    </div>
-    <!-- DASHBOARD -->
-    <div x-data x-show="$store.storeData.user">
-      <h2>Welcome to Dashboard</h2>
-      <p x-text="'Hello, ' + $store.storeData.user?.name"></p>
-      <button @click="$store.storeData.logout()">Logout</button>
-    </div>
-    <!-- --------PLAYGROUND-------- -->
-    <div x-data="getSongs" class="container">
-      <h1>Alpine FE test</h1>
-      <button @click="fetchSong">Fetch songs</button>
+      <!-- DASHBOARD -->
+      <div x-data x-show="$store.storeData.user">
+        <h2>Welcome to Dashboard</h2>
 
-      <template x-if="isLoading">
-        <p aria-busy="true">Loading…</p>
-      </template>
+        <div x-data="songsData" class="container">
+          <h3>Upload a song</h3>
+          <form @submit.prevent="createSong">
+            <input type="text" placeholder="Title" x-model="title" required />
+            <input type="text" placeholder="Author" x-model="author" required />
+            <button type="submit">Upload it!</button>
+          </form>
+          <h3>Song list</h3>
+          <button @click="fetchSongs">Fetch songs</button>
 
-      <template x-if="songs !== null">
-        <table>
-          <thead>
-            <tr>
-              <th scope="col">Song IDX</th>
-              <th scope="col">Song name</th>
-              <th scope="col">Song author</th>
-            </tr>
-          </thead>
-          <tbody>
-            <template x-for="(song, index) in songs" :key="song._id">
-              <tr>
-                <td x-text="index+1"></td>
-                <td x-text="song.name.toLowerCase()"></td>
-                <td x-text="song.author.toLowerCase()"></td>
-              </tr>
-            </template>
-          </tbody>
-        </table>
-      </template>
-    </div>
+          <template x-if="isLoading">
+            <p aria-busy="true">Loading…</p>
+          </template>
+
+          <template x-if="songs !== null">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Song IDX</th>
+                  <th scope="col">Song name</th>
+                  <th scope="col">Song author</th>
+                  <th scope="col">Delete</th>
+                  <th scope="col">Edit</th>
+                </tr>
+              </thead>
+              <tbody>
+                <template x-for="(song, index) in songs" :key="song._id">
+                  <tr>
+                    <td x-text="index+1"></td>
+                    <td x-text="song.name.toLowerCase()"></td>
+                    <td x-text="song.author.toLowerCase()"></td>
+                    <td><span @click="deleteSong(song._id)">❌</span></td>
+                    <td><span @click="editSong(song._id)">📝</span></td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </template>
+        </div>
+      </div>
+    </main>
   </body>
 </html>
