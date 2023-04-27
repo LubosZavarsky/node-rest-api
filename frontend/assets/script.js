@@ -1,4 +1,5 @@
 document.addEventListener("alpine:init", () => {
+  // GLOBAL STORE
   Alpine.store("storeData", {
     init() {
       this.user = JSON.parse(localStorage.getItem("user"));
@@ -10,7 +11,8 @@ document.addEventListener("alpine:init", () => {
       this.user = null;
     },
   });
-  Alpine.data("formData", () => ({
+  // AUTH FORMS
+  Alpine.data("authFormData", () => ({
     username: "",
     email: "",
     password: "",
@@ -83,10 +85,13 @@ document.addEventListener("alpine:init", () => {
       this.password = "";
     },
   })),
+    // SONGS CRUD
     Alpine.data("songsData", () => ({
+      id: "",
       title: "",
       author: "",
       isLoading: false,
+      isEditing: false,
       songs: null,
       fetchSongs() {
         this.isLoading = true;
@@ -131,9 +136,48 @@ document.addEventListener("alpine:init", () => {
           console.log(error);
         }
       },
-      editSong(id) {
-        console.log(id);
+      editSong(song) {
+        this.isEditing = true;
+        this.title = song.name;
+        this.author = song.author;
+        this.id = song._id;
       },
+      updateSong() {
+        try {
+          fetch(`http://localhost:8000/api/songs/${this.id}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${Alpine.store("storeData").user.token}`,
+            },
+            body: JSON.stringify({
+              id: this.id,
+              name: this.title,
+              author: this.author,
+            }),
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.message) {
+                Swal.fire(data.message);
+              } else {
+                this.formReset();
+                this.fetchSongs();
+                Swal.fire({
+                  text: "Song successfully updated!",
+                  background: "#ffe4c4",
+                  position: "bottom-end",
+                  timer: 1500,
+                  showConfirmButton: false,
+                  toast: true,
+                });
+              }
+            });
+        } catch (error) {
+          console.log(error);
+        }
+      },
+
       deleteSong(id) {
         Swal.fire({
           title: "Are you sure?",
@@ -153,7 +197,6 @@ document.addEventListener("alpine:init", () => {
             })
               .then((res) => res.json())
               .then((data) => {
-                console.log(data);
                 if (data.message) {
                   Swal.fire(data.message);
                 } else {
@@ -165,8 +208,10 @@ document.addEventListener("alpine:init", () => {
         });
       },
       formReset() {
+        this.id = "";
         this.title = "";
         this.author = "";
+        this.isEditing = false;
       },
     }));
 });

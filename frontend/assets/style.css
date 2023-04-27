@@ -1,7 +1,12 @@
+[x-cloak] {
+  display: none !important;
+}
+
 .container {
   display: grid;
   place-content: center;
 }
+
 body > header {
   display: flex;
   justify-items: center;
@@ -31,4 +36,8 @@ body > header {
 
 form {
   max-width: 600px;
+}
+
+td > span {
+  cursor: pointer;
 }
