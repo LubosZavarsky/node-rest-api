@@ -48,41 +48,57 @@ document.addEventListener("alpine:init", () => {
       }
     },
     register() {
-      try {
-        fetch(`http://localhost:8000/api/users/`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: this.username,
-            email: this.email,
-            password: this.password,
-          }),
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            if (data.message) {
-              Swal.fire(data.message);
-            } else {
-              Alpine.store("storeData").currentTab = "login";
-              this.formReset();
-              Swal.fire({
-                text: "User successfully registered, please log in!",
-                background: "#ffe4c4",
-                position: "bottom-end",
-                timer: 1500,
-                showConfirmButton: false,
-                toast: true,
-              });
-            }
-          });
-      } catch (error) {
-        console.log(error);
+      if (this.validateRegister()) {
+        try {
+          fetch(`http://localhost:8000/api/users/`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              name: this.username,
+              email: this.email,
+              password: this.password,
+            }),
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.message) {
+                Swal.fire(data.message);
+              } else {
+                Alpine.store("storeData").currentTab = "login";
+                this.formReset();
+                Swal.fire({
+                  text: "User successfully registered, please log in!",
+                  background: "#ffe4c4",
+                  position: "bottom-end",
+                  timer: 1500,
+                  showConfirmButton: false,
+                  toast: true,
+                });
+              }
+            });
+        } catch (error) {
+          console.log(error);
+        }
       }
     },
     formReset() {
       this.username = "";
       this.email = "";
       this.password = "";
+    },
+    validateRegister() {
+      if (
+        !this.isEmail(this.email) ||
+        !this.username.trim().length ||
+        !this.password.trim().length
+      ) {
+        Swal.fire("Please enter valid credentials");
+        return;
+      } else return true;
+    },
+    isEmail(email) {
+      const re = /\S+@\S+\.\S+/;
+      return re.test(email);
     },
   })),
     // SONGS CRUD

@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>💩 cms</title>
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css"
@@ -35,17 +35,11 @@
           <div x-show="$store.storeData.currentTab === 'login'">
             <h2>Login</h2>
             <form @submit.prevent="login">
-              <input
-                type="email"
-                placeholder="Email"
-                x-model="email"
-                required
-              />
+              <input type="email" placeholder="Email" x-model="email" />
               <input
                 type="password"
                 placeholder="Password"
                 x-model="password"
-                required
               />
               <button type="submit">Login</button>
             </form>
@@ -59,23 +53,12 @@
           <div x-show="$store.storeData.currentTab === 'register'">
             <h2>Register</h2>
             <form @submit.prevent="register">
-              <input
-                type="text"
-                placeholder="Username"
-                x-model="username"
-                required
-              />
-              <input
-                type="email"
-                placeholder="Email"
-                x-model="email"
-                required
-              />
+              <input type="text" placeholder="Username" x-model="username" />
+              <input type="email" placeholder="Email" x-model="email" />
               <input
                 type="password"
                 placeholder="Password"
                 x-model="password"
-                required
               />
               <button type="submit">Register</button>
             </form>
