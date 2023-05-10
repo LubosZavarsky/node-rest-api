@@ -19,6 +19,7 @@ document.addEventListener("alpine:init", () => {
     login() {
       try {
         fetch(`http://localhost:8000/api/users/login`, {
+          // !! only in dev env, change to /api/songs in prod !!
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email: this.email, password: this.password }),
@@ -111,7 +112,7 @@ document.addEventListener("alpine:init", () => {
       songs: null,
       fetchSongs() {
         this.isLoading = true;
-        fetch(`http://localhost:8000/api/songs/`) // !! only in dev env, change to /api/songs in prod !!
+        fetch(`http://localhost:8000/api/songs/`)
           .then((res) => res.json())
           .then((data) => {
             this.isLoading = false;
