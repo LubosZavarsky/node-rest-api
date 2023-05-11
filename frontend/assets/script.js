@@ -91,7 +91,7 @@ document.addEventListener("alpine:init", () => {
       if (
         !this.isEmail(this.email) ||
         !this.username.trim().length ||
-        !this.password.trim().length
+        this.password.length < 3
       ) {
         Swal.fire("Please enter valid credentials");
         return;

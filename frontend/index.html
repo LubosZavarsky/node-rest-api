@@ -53,12 +53,23 @@
           <div x-show="$store.storeData.currentTab === 'register'">
             <h2>Register</h2>
             <form @submit.prevent="register">
-              <input type="text" placeholder="Username" x-model="username" />
-              <input type="email" placeholder="Email" x-model="email" />
+              <input
+                type="text"
+                placeholder="Username"
+                x-model="username"
+                :class="{'invalid': username.length && !username.trim().length, 'valid': username.trim().length }"
+              />
+              <input
+                type="email"
+                placeholder="Email"
+                x-model="email"
+                :class="{'invalid': email.trim().length && !isEmail(email), 'valid': email.trim().length && isEmail(email) }"
+              />
               <input
                 type="password"
                 placeholder="Password"
                 x-model="password"
+                :class="{'invalid': password.length && password.length < 3, 'valid': password.length >= 3}"
               />
               <button type="submit">Register</button>
             </form>
