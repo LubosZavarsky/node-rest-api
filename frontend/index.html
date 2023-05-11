@@ -21,7 +21,7 @@
     <header>
       <div>💩 <strong>cms</strong></div>
       <div class="user-info" x-cloak x-data x-show="$store.storeData.user">
-        <p x-text="'Hello, ' + $store.storeData.user?.name"></p>
+        <span x-text="'Hello, ' + $store.storeData.user?.name"></span>
         <button @click="$store.storeData.logout()">Logout</button>
       </div>
     </header>
@@ -73,7 +73,9 @@
               />
               <button type="submit">Register</button>
             </form>
-            <a href="#" @click.prevent="$store.storeData.currentTab = 'login'"
+            <a
+              href="#"
+              @click.prevent="$store.storeData.currentTab = 'login'; formReset()"
               >Already have an account</a
             >
           </div>

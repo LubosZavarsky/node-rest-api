@@ -1,3 +1,11 @@
+[data-theme="light"],
+:root:not([data-theme="dark"]) {
+  --primary: #546e7a;
+  --primary-hover: #455a64;
+  --primary-focus: rgba(84, 110, 122, 0.125);
+  --primary-inverse: #fff;
+}
+
 [x-cloak] {
   display: none !important;
 }
@@ -12,7 +20,9 @@ body > header {
   justify-items: center;
   align-items: center;
   padding: 1rem 1rem;
-  background-color: #ffe4c4;
+  border-bottom: 1px solid var(--primary);
+  background-color: var(--primary-inverse);
+  color: var(--contrast);
 }
 
 .user-info {

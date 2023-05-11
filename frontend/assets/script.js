@@ -1,14 +1,15 @@
 document.addEventListener("alpine:init", () => {
   // GLOBAL STORE
   Alpine.store("storeData", {
+    user: null,
+    currentTab: "login",
     init() {
       this.user = JSON.parse(localStorage.getItem("user"));
     },
-    user: null,
-    currentTab: "login",
     logout() {
       localStorage.removeItem("user");
       this.user = null;
+      document.querySelectorAll("form").forEach((f) => f.reset());
     },
   });
   // AUTH FORMS
@@ -18,8 +19,7 @@ document.addEventListener("alpine:init", () => {
     password: "",
     login() {
       try {
-        fetch(`http://localhost:8000/api/users/login`, {
-          // !! only in dev env, change to /api/songs in prod !!
+        fetch(`/api/users/login`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email: this.email, password: this.password }),
@@ -51,7 +51,7 @@ document.addEventListener("alpine:init", () => {
     register() {
       if (this.validateRegister()) {
         try {
-          fetch(`http://localhost:8000/api/users/`, {
+          fetch(`/api/users/`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -112,7 +112,7 @@ document.addEventListener("alpine:init", () => {
       songs: null,
       fetchSongs() {
         this.isLoading = true;
-        fetch(`http://localhost:8000/api/songs/`)
+        fetch(`/api/songs/`)
           .then((res) => res.json())
           .then((data) => {
             this.isLoading = false;
@@ -121,7 +121,7 @@ document.addEventListener("alpine:init", () => {
       },
       createSong() {
         try {
-          fetch(`http://localhost:8000/api/songs`, {
+          fetch(`/api/songs`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -161,7 +161,7 @@ document.addEventListener("alpine:init", () => {
       },
       updateSong() {
         try {
-          fetch(`http://localhost:8000/api/songs/${this.id}`, {
+          fetch(`/api/songs/${this.id}`, {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
@@ -206,7 +206,7 @@ document.addEventListener("alpine:init", () => {
           confirmButtonText: "Yes, delete it!",
         }).then((result) => {
           if (result.isConfirmed) {
-            fetch(`http://localhost:8000/api/songs/${id}`, {
+            fetch(`/api/songs/${id}`, {
               method: "DELETE",
               headers: {
                 Authorization: `Bearer ${Alpine.store("storeData").user.token}`,
