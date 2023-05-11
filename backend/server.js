@@ -3,7 +3,7 @@ import colors from "colors";
 import * as dotenv from "dotenv";
 import songRouter from "./routes/songRoutes.js";
 import userRouter from "./routes/userRoutes.js";
-import errorHandler from "./middleware/ahoj.js";
+import errorHandler from "./middleware/errorMiddleware.js";
 import connectDB from "./config/db.js";
 import { URL } from "url";
 import cors from "cors";
