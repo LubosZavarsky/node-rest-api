@@ -10,7 +10,7 @@
   display: none !important;
 }
 
-.container {
+.center {
   display: grid;
   place-content: center;
 }
@@ -21,7 +21,6 @@ body > header {
   align-items: center;
   padding: 1rem 1rem;
   border-bottom: 1px solid var(--primary);
-  background-color: var(--primary-inverse);
   color: var(--contrast);
 }
 

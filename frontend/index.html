@@ -20,17 +20,19 @@
   <body>
     <header>
       <div>💩 <strong>cms</strong></div>
-      <div class="user-info" x-cloak x-data x-show="$store.storeData.user">
-        <span x-text="'Hello, ' + $store.storeData.user?.name"></span>
-        <button @click="$store.storeData.logout()">Logout</button>
-      </div>
+      <template x-data x-if="$store.storeData.user">
+        <div class="user-info">
+          <span x-text="'Hello, ' + $store.storeData.user.name"></span>
+          <button @click="$store.storeData.logout()">Logout</button>
+        </div>
+      </template>
     </header>
     <main class="container">
       <p x-text="$store.storeData.currentTab"></p>
 
       <!-- AUTH FORMS -->
-      <div x-cloak x-data x-show="!$store.storeData.user">
-        <div x-data="authFormData">
+      <template x-data="authFormData" x-if="!$store.storeData.user">
+        <div class="center">
           <!-- LOGIN FORM -->
           <div x-show="$store.storeData.currentTab === 'login'">
             <h2>Login</h2>
@@ -45,7 +47,7 @@
             </form>
             <a
               href="#"
-              @click.prevent="$store.storeData.currentTab = 'register'"
+              @click.prevent="$store.storeData.currentTab = 'register'; formReset()"
               >Create an account</a
             >
           </div>
@@ -80,12 +82,11 @@
             >
           </div>
         </div>
-      </div>
+      </template>
       <!-- DASHBOARD -->
-      <div x-cloak x-data x-show="$store.storeData.user">
-        <h2>Welcome to Dashboard</h2>
-
-        <div x-data="songsData" class="container">
+      <template x-data="songsData" x-if="$store.storeData.user" class="center">
+        <div class="center">
+          <h2>Welcome to Dashboard</h2>
           <h3 x-text="isEditing ? 'Edit song' : 'Upload song'"></h3>
           <form @submit.prevent="isEditing ? updateSong : createSong">
             <input type="text" placeholder="Title" x-model="title" required />
@@ -107,31 +108,33 @@
           </template>
 
           <template x-init="fetchSongs" x-if="songs !== null">
-            <table>
-              <thead>
-                <tr>
-                  <th scope="col">Song IDX</th>
-                  <th scope="col">Song name</th>
-                  <th scope="col">Song author</th>
-                  <th scope="col">Delete</th>
-                  <th scope="col">Edit</th>
-                </tr>
-              </thead>
-              <tbody>
-                <template x-for="(song, index) in songs" :key="song._id">
+            <figure>
+              <table role="grid">
+                <thead>
                   <tr>
-                    <td x-text="index+1"></td>
-                    <td x-text="song.name.toLowerCase()"></td>
-                    <td x-text="song.author.toLowerCase()"></td>
-                    <td><span @click="deleteSong(song._id)">❌</span></td>
-                    <td><span @click="editSong(song)">📝</span></td>
+                    <th scope="col">Song IDX</th>
+                    <th scope="col">Song name</th>
+                    <th scope="col">Song author</th>
+                    <th scope="col">Delete</th>
+                    <th scope="col">Edit</th>
                   </tr>
-                </template>
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  <template x-for="(song, index) in songs" :key="song._id">
+                    <tr>
+                      <td x-text="index+1"></td>
+                      <td x-text="song.name.toLowerCase()"></td>
+                      <td x-text="song.author.toLowerCase()"></td>
+                      <td><span @click="deleteSong(song._id)">❌</span></td>
+                      <td><span @click="editSong(song)">📝</span></td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+            </figure>
           </template>
         </div>
-      </div>
+      </template>
     </main>
   </body>
 </html>
